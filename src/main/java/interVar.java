@@ -258,10 +258,7 @@ public class interVar {
             double deltaT = t/m;
 
 
-//            System.out.println(eDot);
-//            System.out.println(temp);
-//            System.out.println(n);
-//            System.out.println(m);
+
             double Z = countZ(temp.get(i),eDot.get(i));
             double roCrr = countRoCr(a,Z);
 
