@@ -156,28 +156,28 @@ public class interVar {
     }
     public static List<Double> generateSmalla(){
         List<Double> a = new ArrayList<>();
-        a.add(generateNumber(0.05,0.15)*Math.pow(10,-3));//1
+        a.add(generateNumber(0.01,100)*Math.pow(10,-3));//1
         // a.add(1.5*Math.pow(10,-3));
-        a.add(generateNumber(15000,22000));//2
+        a.add(generateNumber(0.001,1000));//2
         // a.add((156.0));
-        a.add(generateNumber(50,100)*Math.pow(10,3));//3
+        a.add(generateNumber(0.1,100)*Math.pow(10,3));//3
         // a.add(15.5*Math.pow(10,3));
-        a.add(generateNumber(0.01,0.09)*3*Math.pow(10,10));//4
+        a.add(generateNumber(Math.pow(10,-10),1)*3*Math.pow(10,10));//4
         // a.add(0.000128*3*Math.pow(10,10));
-        a.add(generateNumber(100,150)*Math.pow(10,3));//5
+        a.add(generateNumber(0.01,100)*Math.pow(10,3));//5
         // a.add(121.0*Math.pow(10,3));
-        a.add(generateNumber(1.5,2.5));//6
-        a.add(generateNumber(0,0));//7
-        a.add(generateNumber(0.2,0.8));//8
+        a.add(generateNumber(Math.pow(10,-4),100));//6
+        a.add(generateNumber(Math.pow(10,-3),100));//7
+        a.add(1.0);//8
         //a.add(0.5);
-        a.add(generateNumber(0.05,0.25));//9
+        a.add(0.0);//9
         // a.add(0.0);
-        a.add(generateNumber(0.1,0.9));//10
+        a.add(generateNumber(Math.pow(10,-5),10));//10
         // a.add(0.162);
-        a.add(0.0*Math.pow(10,13));//11
-        a.add(generateNumber(0.00001,0.00009)*Math.pow(10,13));//12
+        a.add(0.0);//11
+        a.add(generateNumber(Math.pow(10,-10),10)*Math.pow(10,13));//12
         // a.add(0.000505*Math.pow(10,13));
-        a.add(generateNumber(0.01,0.09));//13
+        a.add(generateNumber(Math.pow(10,-5),10));//13
         // a.add(0.137);
         return a;
     }
