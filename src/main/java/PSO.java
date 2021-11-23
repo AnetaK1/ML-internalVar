@@ -1,7 +1,3 @@
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -35,7 +31,7 @@ public class PSO {
 
     //from file to internal variable
     List<List<Double>> eps;
-    List<List<Double>> roP;
+    List<List<Double>> sigmaE;
     List<Double> temp;
     List<Double> eDot;
     final Double Kelvin = 273.15;
@@ -56,7 +52,7 @@ public class PSO {
         roInt = Math.pow(10, 4);
 
         eps = new ArrayList<List<Double>>();
-        roP = new ArrayList<List<Double>>();
+        sigmaE = new ArrayList<List<Double>>();
         temp = new ArrayList<>();
         eDot = new ArrayList<>();
         m = new ArrayList<>();
@@ -82,7 +78,7 @@ public class PSO {
         roInt = Math.pow(10, 4);
 
         eps = new ArrayList<List<Double>>();
-        roP = new ArrayList<List<Double>>();
+        sigmaE = new ArrayList<List<Double>>();
         temp = new ArrayList<>();
         eDot = new ArrayList<>();
         m = new ArrayList<>();
@@ -150,10 +146,10 @@ public class PSO {
     }
 
     //calculate fun goal in PSO
-    public List<Double> calcFunGoal(List<Particle> R, String fname) {
+    public List<Double> calcFunGoal(List<Particle> R) {
         List<Double> fGoal = new ArrayList<>();
         for (int i = 0; i < R.size(); i++) {
-            fGoal.add(chooseFun(fname, R.get(i).getX()));
+            fGoal.add(chooseFun(R.get(i).getX()));
         }
         return fGoal;
     }
@@ -169,7 +165,7 @@ public class PSO {
     }
 
     //find best particle
-    public Particle findBestParicle(List<Double> fGoal, List<Particle> R, Particle G, String fname) {
+    public Particle findBestParicle(List<Double> fGoal, List<Particle> R, Particle G) {
         int index = 0;
         Double min = Collections.min(fGoal);
 
@@ -180,7 +176,7 @@ public class PSO {
             }
         }
 
-        if (chooseFun(fname, G.getX()) > fGoal.get(index)) {
+        if (chooseFun(G.getX()) > fGoal.get(index)) {
             return R.get(index);
         } else return G;
 
@@ -192,7 +188,6 @@ public class PSO {
     /////////////////////////////////////
     //load data from file 100 of rows
     public void loadData(String fileName) throws IOException {
-        
         File excelFile = new File(fileName);
         FileInputStream fis = new FileInputStream(excelFile);
 
@@ -209,14 +204,14 @@ public class PSO {
             //  rowIt.next();
 
             List<Double> epsSingle = new ArrayList<>();
-            List<Double> roSingle = new ArrayList<>();
+            List<Double> sigmaSingle = new ArrayList<>();
 
             Row r = rowIt.next();
             Iterator<Cell> cellIteratorr = r.cellIterator();
             Cell c1 = cellIteratorr.next();
             Cell c2 = cellIteratorr.next();
 
-            System.out.println(c1 + "           " + c2);
+            //  System.out.println(c1 + "           " + c2);
 
             temp.add(Double.valueOf(String.valueOf(c1)) + Kelvin);
             eDot.add(Double.valueOf(String.valueOf(c2)));
@@ -242,13 +237,13 @@ public class PSO {
 
                 p++;
                 epsSingle.add(es.get(0));
-                roSingle.add(es.get(1));
+                sigmaSingle.add(es.get(1));
 
 
             }
 
             eps.add(epsSingle);
-            roP.add(roSingle);
+            sigmaE.add(sigmaSingle);
             m.add((double) p);
             p = 0;
 
@@ -260,7 +255,7 @@ public class PSO {
 
     //number of sheets
     public int getN() {
-        return roP.size();
+        return sigmaE.size();
     }
 
 
@@ -298,18 +293,17 @@ public class PSO {
     }
 
     //eval ro in one step
-    public double evalRo(List<Double> ro, List<Double> A, double eDot, int k, double a8, int tInf, int j) {
+    public double evalRo(List<Double> ro, List<Double> A, double eDot, int j, double a8, int tInf, int k) {
         double result = A.get(0) * eDot -
-                A.get(1) * ro.get(k) * eDot -
-                A.get(2) * Math.pow(ro.get(k), a8) * tInf * ro.get((k - j));
+                A.get(1) * ro.get(j) * eDot -
+                A.get(2) * Math.pow(ro.get(j), a8) * tInf * ro.get((j - k));
         return result;
     }
 
     //definition of goal function in internal variable
-    public double chooseFun(String fNAme, List<Double> x) {
+    public double chooseFun(List<Double> x) {
         double sum = 0.0;
         double n = getN();
-        double roP = 0.0;
 
         for (int i = 0; i < n; i++) {
             double t = 1 / eDot.get(i);
@@ -349,8 +343,9 @@ public class PSO {
 
 
                 if (j != 0) {
-                    roP = getRo().get(i).get(j);
-                    sum += Math.pow((roP - roONew.get(j - 1)) / (roP), 2);
+                    double sigma = getSigmaE().get(i).get(j);
+                    double sigmaO = (x.get(6) + x.get(5) * u * b * Math.sqrt(roONew.get(j - 1)));
+                    sum += Math.pow((sigma - sigmaO / (sigma)), 2);
                 }
                 tt += deltaT;
             }
@@ -361,19 +356,19 @@ public class PSO {
     }
 
     //get vector of ro from file
-    public List<List<Double>> getRo() {
-        return roP;
+    public List<List<Double>> getSigmaE() {
+        return sigmaE;
     }
 
     //PSO
-    public Particle methodPSO(double w, double c1, double c2, String fname, List<List<Double>> vect) {
+    public Particle methodPSO(double w, double c1, double c2, List<List<Double>> vect) {
 
         List<Particle> saveG = new ArrayList<>();
         List<Double> saveFGoal = new ArrayList<>();
 
         createR(vect);
 
-        List<Double> fGoal = calcFunGoal(R, fname);
+        List<Double> fGoal = calcFunGoal(R);
         List<List<Double>> P = bestPosition(R);
 
         int index = 0;
@@ -393,20 +388,21 @@ public class PSO {
         while (iter < maxIter) {
             iter++;
             R = generateNewR(R, w, c1, c2, G, P);
-            fGoal = calcFunGoal(R, fname);
+            fGoal = calcFunGoal(R);
             P = bestPosition(R);
-            G = findBestParicle(fGoal, R, G, fname);
-            Double fActualValue = chooseFun(fname, G.getX());
+            G = findBestParicle(fGoal, R, G);
+            Double fActualValue = chooseFun(G.getX());
             //Stop if function value occurs more than 10 times
             if (Collections.frequency(saveFGoal, fActualValue) >= 10) {
                 break;
             }
+            // data to file
             saveFGoal.add(fActualValue);
             saveG.add(G);
         }
 
         try {
-            data.savePSOData(saveG, saveFGoal, fname);
+            data.savePSOData(saveG, saveFGoal);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -417,12 +413,11 @@ public class PSO {
 
     //save ro based on small a vector
     public void save(List<Double> a) throws IOException {
-        List<List<Double>> roO = new ArrayList<>();
-        List<List<Double>> epsO = new ArrayList<>();
+        List<List<Double>> sigmaO = new ArrayList<>();
 
         for (int o = 0; o < getN(); o++) {
             List<Double> ro = new ArrayList<>();
-            List<Double> eps = new ArrayList<>();
+            List<Double> sigma = new ArrayList<>();
 
             double Z = countZ(temp.get(o), eDot.get(o));
             double roCr = countRoCr(a, Z);
@@ -453,17 +448,15 @@ public class PSO {
 
 
                 double roNew = ro.get(k) + deltaT * evalRo(ro, A, eDot.get(o), k, a.get(7), tInf, j);
-                System.out.println(roNew + " t " + i);
-                eps.add(a.get(6) + a.get(5) * u * b * Math.sqrt(roNew));
+                sigma.add(a.get(6) + a.get(5) * u * b * Math.sqrt(roNew));
 
                 ro.add(roNew);
                 k++;
             }
-            roO.add(ro);
-            epsO.add(eps);
+            sigmaO.add(ro);
         }
 
-        data.saveData(a, getN(), this.m, roO, epsO, roP, eps);
+        data.saveData(a, getN(), this.m, sigmaO, sigmaE, eps);
 
 
     }
@@ -478,7 +471,7 @@ public class PSO {
         double w = 0.5;
         double c1 = 1;
         double c2 = 1;
-        Particle x = pso.methodPSO(w, c1, c2, "Var", aa);
+        Particle x = pso.methodPSO(w, c1, c2, aa);
         List<Double> fin = x.getX();
         try {
             pso.save(fin);

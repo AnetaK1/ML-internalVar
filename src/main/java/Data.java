@@ -4,15 +4,14 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Data {
 
 
-    public void savePSOData(List<Particle> G, List<Double> fGoal, String fName) throws IOException {
+    public void savePSOData(List<Particle> G, List<Double> fGoal) throws IOException {
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter(fName + ".csv"));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("ValueOfGoalFun.csv"));
         for (int i = 0; i < G.get(0).getX().size(); i++) {
             writer.append("x" + i);
             writer.append(";");
@@ -32,7 +31,7 @@ public class Data {
         writer.close();
     }
 
-    public void saveData(List<Double> a, int n, List<Double> m, List<List<Double>> roO, List<List<Double>> epsO, List<List<Double>> roP, List<List<Double>> eps) throws IOException {
+    public void saveData(List<Double> a, int n, List<Double> m, List<List<Double>> sigmaO, List<List<Double>> sigmaE, List<List<Double>> eps) throws IOException {
 
         String excelFileName = "InternakVar.xls";
 
@@ -53,13 +52,10 @@ public class Data {
                                 cell.setCellValue("epsP");
                                 break;
                             case 1:
-                                cell.setCellValue("epsO");
+                                cell.setCellValue("sigmaE");
                                 break;
                             case 2:
-                                cell.setCellValue("roP");
-                                break;
-                            case 3:
-                                cell.setCellValue("roO");
+                                cell.setCellValue("sigmaO");
                                 break;
                             default:
                                 cell.setCellValue(0);
@@ -76,13 +72,10 @@ public class Data {
                                 cell.setCellValue(eps.get(i).get(r));
                                 break;
                             case 1:
-                                cell.setCellValue(epsO.get(i).get(r));
+                                cell.setCellValue(sigmaE.get(i).get(r));
                                 break;
                             case 2:
-                                cell.setCellValue(roP.get(i).get(r));
-                                break;
-                            case 3:
-                                cell.setCellValue(roO.get(i).get(r));
+                                cell.setCellValue(sigmaO.get(i).get(r));
                                 break;
                             default:
                                 cell.setCellValue(0);
