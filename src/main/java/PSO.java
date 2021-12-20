@@ -338,16 +338,18 @@ public class PSO {
                     }
                 }
 
+                //tt+=deltaT;
                 double roNew = roONew.get(j) + deltaT * evalRo(roONew, Aa, eDot.get(i), j, x.get(7), tInf, k);
                 roONew.add(roNew);
 
 
-                if (j != 0) {
-                    double sigma = getSigmaE().get(i).get(j);
-                    double sigmaO = (x.get(6) + x.get(5) * u * b * Math.sqrt(roONew.get(j - 1)));
-                    sum += Math.pow((sigma - sigmaO / (sigma)), 2);
-                }
-                tt += deltaT;
+                //if (j != 0) {
+                double sigma = getSigmaE().get(i).get(j);
+                double sigmaO = (x.get(6) + x.get(5) * u * b * Math.sqrt(roONew.get(j)));
+
+                sum += Math.pow((sigma - sigmaO / (sigma)), 2);
+
+                // }
             }
             sum /= m;
         }
@@ -393,7 +395,7 @@ public class PSO {
             G = findBestParicle(fGoal, R, G);
             Double fActualValue = chooseFun(G.getX());
             //Stop if function value occurs more than 10 times
-            if (Collections.frequency(saveFGoal, fActualValue) >= 10) {
+            if (Collections.frequency(saveFGoal, fActualValue) >= 50) {
                 break;
             }
             // data to file
@@ -422,21 +424,20 @@ public class PSO {
             double Z = countZ(temp.get(o), eDot.get(o));
             double roCr = countRoCr(a, Z);
             List<Double> A = evalBigA(a, Z, eDot.get(o), temp.get(o));
-            double tCr = Math.pow(10, 8);
-            ro.add(roInt);
+            ro.add(0.0);
             double t = 1 / eDot.get(o);
             double deltaT = t / this.m.get(o);
 
             int k = 0;
-            int j = 0;
+
             int tInf = 0;
 
-            for (double i = 0; i <= t; i += deltaT) {
+            for (int j = 0; j < m.get(o); j++) {
 
-                if (j == 0) {
+                if (k == 0) {
 
-                    if (ro.get(k) >= roCr) {
-                        j = k;
+                    if (ro.get(j) >= roCr) {
+                        k = j;
 
                         tInf = 1;
 
@@ -447,13 +448,14 @@ public class PSO {
                 }
 
 
-                double roNew = ro.get(k) + deltaT * evalRo(ro, A, eDot.get(o), k, a.get(7), tInf, j);
-                sigma.add(a.get(6) + a.get(5) * u * b * Math.sqrt(roNew));
+                double roNew = ro.get(j) + deltaT * evalRo(ro, A, eDot.get(o), j, a.get(7), tInf, k);
+
+                sigma.add(a.get(6) + a.get(5) * u * b * Math.sqrt(ro.get(j)));
 
                 ro.add(roNew);
-                k++;
+
             }
-            sigmaO.add(ro);
+            sigmaO.add(sigma);
         }
 
         data.saveData(a, getN(), this.m, sigmaO, sigmaE, eps);
@@ -473,8 +475,24 @@ public class PSO {
         double c2 = 1;
         Particle x = pso.methodPSO(w, c1, c2, aa);
         List<Double> fin = x.getX();
+        List<Double> apdf = new ArrayList<>();
+        apdf.add(1.4301 * Math.pow(10, -3));
+        apdf.add(98.439);
+        apdf.add(15.527 * Math.pow(10, 3));
+        apdf.add(0.000179 * 3 * Math.pow(10, 10));
+        apdf.add(154.88 * Math.pow(10, 3));
+        apdf.add(0.80704);
+        apdf.add(3.1946);
+        apdf.add(0.98381);
+        apdf.add(0.005912);
+        apdf.add(0.2899);
+        apdf.add(0.0);
+        apdf.add(0.000538 * Math.pow(10, 13));
+        apdf.add(0.15551);
+
+
         try {
-            pso.save(fin);
+            pso.save(apdf);
         } catch (IOException e) {
             e.printStackTrace();
         }

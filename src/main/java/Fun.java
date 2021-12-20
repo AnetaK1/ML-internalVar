@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Fun {
@@ -42,4 +43,61 @@ public class Fun {
 
         return res;
     }
+
+//    public double chooseFun(List<Double> x) {
+//        double sum = 0.0;
+//        double n = getN();
+//
+//        for (int i = 0; i < n; i++) {
+//            double t = 1 / eDot.get(i);
+//            double m = this.m.get(i);
+//
+//            double deltaT = t / m;
+////
+////            System.out.println("DEltaT: "+ deltaT);
+////            System.out.println("NUMEr arkusza: "+ i);
+////            System.out.println("A: "+a);
+//
+//            double Z = countZ(temp.get(i), eDot.get(i));
+//            double roCrr = countRoCr(x, Z);
+//            //   System.out.println("RoCR  "+roCrr+ "\nfor "+i);
+//            roCr.add(roCrr);
+//            List<Double> Aa = evalBigA(x, Z, eDot.get(i), temp.get(i));
+//            A.add(Aa);
+//            //    System.out.println("Big A:"+Aa);
+//            double tt = 0.0;
+//            int k = 0;
+//            int tInf = 0;
+//            List<Double> roONew = new ArrayList<>();
+//            roONew.add(roInt);
+//            for (int j = 0; j < m; j++) {
+//
+//                if (k == 0) {
+//                    if (roONew.get(j) >= roCrr) {
+//                        k = j;
+//                        tInf = 1;
+//                    } else {
+//                        tInf = 0;
+//                    }
+//                }
+//
+//                //tt+=deltaT;
+//                double roNew = roONew.get(j) + tt * evalRo(roONew, Aa, eDot.get(i), j, x.get(7), tInf, k);
+//                roONew.add(roNew);
+//
+//
+//
+//                if (j != 0) {
+//                    double sigma = getSigmaE().get(i).get(j);
+//                    double sigmaO = (x.get(6) + x.get(5) * u * b * Math.sqrt(roONew.get(j - 1)));
+//
+//                    sum += Math.pow((sigma - sigmaO / (sigma)), 2);
+//                }
+//                tt += deltaT;
+//            }
+//            sum /= m;
+//        }
+//        sum /= n;
+//        return sum;
+//    }
 }

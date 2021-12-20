@@ -4,6 +4,7 @@ import java.util.List;
 
 public class HookeJeeves {
     private Fun fun;
+    private Data data;
 
     public HookeJeeves() {
         fun = new Fun();
@@ -80,7 +81,64 @@ public class HookeJeeves {
             }
         }
 
-        // data.saveData(stepsValue,vectorValues,fName);
         return xB;
+    }
+
+//    public void save(List<Double> a) throws IOException {
+//        List<List<Double>> sigmaO = new ArrayList<>();
+//
+//        for (int o = 0; o < getN(); o++) {
+//            List<Double> ro = new ArrayList<>();
+//            List<Double> sigma = new ArrayList<>();
+//
+//            double Z = countZ(temp.get(o), eDot.get(o));
+//            double roCr = countRoCr(a, Z);
+//            List<Double> A = evalBigA(a, Z, eDot.get(o), temp.get(o));
+//            double tCr = Math.pow(10, 8);
+//            ro.add(roInt);
+//            double t = 1 / eDot.get(o);
+//            double deltaT = t / this.m.get(o);
+//
+//            int k = 0;
+//            int j = 0;
+//            int tInf = 0;
+//
+//            for (double i = 0; i < m.get(o); i ++) {
+//
+//                if (j == 0) {
+//
+//                    if (ro.get(k) >= roCr) {
+//                        j = k;
+//
+//                        tInf = 1;
+//
+//                    } else {
+//                        tInf = 0;
+//
+//                    }
+//                }
+//
+//
+//                double roNew = ro.get(k) + deltaT * evalRo(ro, A, eDot.get(o), k, a.get(7), tInf, j);
+//                sigma.add(a.get(6) + a.get(5) * u * b * Math.sqrt(roNew));
+//
+//                ro.add(roNew);
+//                k++;
+//            }
+//            System.out.println(ro);
+//            sigmaO.add(ro);
+//        }
+//
+//        data.saveData(a, getN(), this.m, sigmaO, sigmaE, eps);
+//
+//
+//    }
+
+    public static void main(String[] args) throws IOException {
+        List<Double> a = interVar.generateSmalla();
+        HookeJeeves hookeJeeves = new HookeJeeves();
+        List<Double> fin = hookeJeeves.HookeJeevesMethod("www",a,0.5,0.5,0.01);
+
+
     }
 }

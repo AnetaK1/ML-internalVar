@@ -41,48 +41,50 @@ public class Data {
             sheet = wb.createSheet("Arkusz" + i);
             double mm = m.get(i);
 
-
             for (int r = 0; r < mm; r++) {
                 HSSFRow row = sheet.createRow(r);
-                if (r == 0) {
-                    for (int c = 0; c < 4; c++) {
-                        HSSFCell cell = row.createCell(c);
-                        switch (c) {
-                            case 0:
-                                cell.setCellValue("epsP");
-                                break;
-                            case 1:
-                                cell.setCellValue("sigmaE");
-                                break;
-                            case 2:
-                                cell.setCellValue("sigmaO");
-                                break;
-                            default:
-                                cell.setCellValue(0);
-                        }
+//                if (r == 0) {
+//                    for (int c = 0; c < 3; c++) {
+//                        HSSFCell cell = row.createCell(c);
+//                        switch (c) {
+//                            case 0:
+//                                cell.setCellValue("epsP");
+//                                break;
+//                            case 1:
+//                                cell.setCellValue("sigmaE");
+//                                break;
+//                            case 2:
+//                                cell.setCellValue("sigmaO");
+//                                break;
+//                            default:
+//                                cell.setCellValue(0);
+//                        }
+//                    }
+//                } else {
+
+
+                for (int c = 0; c < 3; c++) {
+                    HSSFCell cell = row.createCell(c);
+
+                    switch (c) {
+                        case 0:
+                            cell.setCellValue(eps.get(i).get(r));
+
+                            break;
+                        case 1:
+                            cell.setCellValue(sigmaE.get(i).get(r));
+
+                            break;
+                        case 2:
+                            cell.setCellValue(sigmaO.get(i).get(r));
+
+                            break;
+                        default:
+                            cell.setCellValue(0);
                     }
-                } else {
 
-
-                    for (int c = 0; c < 4; c++) {
-                        HSSFCell cell = row.createCell(c);
-
-                        switch (c) {
-                            case 0:
-                                cell.setCellValue(eps.get(i).get(r));
-                                break;
-                            case 1:
-                                cell.setCellValue(sigmaE.get(i).get(r));
-                                break;
-                            case 2:
-                                cell.setCellValue(sigmaO.get(i).get(r));
-                                break;
-                            default:
-                                cell.setCellValue(0);
-                        }
-
-                    }
                 }
+                // }
             }
         }
         FileOutputStream fileOut = new FileOutputStream(excelFileName);
