@@ -9,6 +9,7 @@ import java.util.*;
 public class PSO {
 
 
+    //to mozna modyfikowac ilosc krokow po ktorych pso się zatrzyma
     final int maxIter = 1000;
 
     //to save data
@@ -186,7 +187,7 @@ public class PSO {
     ////////////////////////////////////////////////
 //internal variable methods
     /////////////////////////////////////
-    //load data from file 100 of rows
+    //load data from file
     public void loadData(String fileName) throws IOException {
         File excelFile = new File(fileName);
         FileInputStream fis = new FileInputStream(excelFile);
@@ -201,8 +202,6 @@ public class PSO {
         for (int i = 0; i < sheets.size(); i++) {
             Iterator<Row> rowIt = sheets.get(i).iterator();
 
-            //  rowIt.next();
-
             List<Double> epsSingle = new ArrayList<>();
             List<Double> sigmaSingle = new ArrayList<>();
 
@@ -211,7 +210,6 @@ public class PSO {
             Cell c1 = cellIteratorr.next();
             Cell c2 = cellIteratorr.next();
 
-            //  System.out.println(c1 + "           " + c2);
 
             temp.add(Double.valueOf(String.valueOf(c1)) + Kelvin);
             eDot.add(Double.valueOf(String.valueOf(c2)));
@@ -228,26 +226,17 @@ public class PSO {
 
                 while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
-
                     es.add(Double.valueOf(String.valueOf(cell)));
-                    // System.out.println(cell);
-
-
                 }
-
                 p++;
                 epsSingle.add(es.get(0));
                 sigmaSingle.add(es.get(1));
-
-
             }
 
             eps.add(epsSingle);
             sigmaE.add(sigmaSingle);
             m.add((double) p);
             p = 0;
-
-
         }
         workbook.close();
         fis.close();
@@ -309,19 +298,17 @@ public class PSO {
             double t = 1 / eDot.get(i);
             double m = this.m.get(i);
 
-            double deltaT = t / m;
-//
-//            System.out.println("DEltaT: "+ deltaT);
-//            System.out.println("NUMEr arkusza: "+ i);
-//            System.out.println("A: "+a);
+            //tu jest krok czsowy mozna probowac modyfikowac
+            double deltaT = t / 1000;
+
 
             double Z = countZ(temp.get(i), eDot.get(i));
             double roCrr = countRoCr(x, Z);
-            //   System.out.println("RoCR  "+roCrr+ "\nfor "+i);
+
             roCr.add(roCrr);
             List<Double> Aa = evalBigA(x, Z, eDot.get(i), temp.get(i));
             A.add(Aa);
-            //    System.out.println("Big A:"+Aa);
+
             double tt = 0.0;
             int k = 0;
             int tInf = 0;
@@ -343,13 +330,13 @@ public class PSO {
                 roONew.add(roNew);
 
 
-                //if (j != 0) {
+              //  if (j != 0) {
                 double sigma = getSigmaE().get(i).get(j);
                 double sigmaO = (x.get(6) + x.get(5) * u * b * Math.sqrt(roONew.get(j)));
 
                 sum += Math.pow((sigma - sigmaO / (sigma)), 2);
 
-                // }
+              //   }
             }
             sum /= m;
         }
@@ -395,9 +382,9 @@ public class PSO {
             G = findBestParicle(fGoal, R, G);
             Double fActualValue = chooseFun(G.getX());
             //Stop if function value occurs more than 10 times
-            if (Collections.frequency(saveFGoal, fActualValue) >= 50) {
-                break;
-            }
+//            if (Collections.frequency(saveFGoal, fActualValue) >= 50) {
+//                break;
+//            }
             // data to file
             saveFGoal.add(fActualValue);
             saveG.add(G);
@@ -413,9 +400,10 @@ public class PSO {
 //////////////////////////////////
 
 
-    //save ro based on small a vector
+    //liczenie sigm w petli po czasie dla wynikowego wektora a
     public void save(List<Double> a) throws IOException {
         List<List<Double>> sigmaO = new ArrayList<>();
+        List<List<Double>> timeO = new ArrayList<>();
 
         for (int o = 0; o < getN(); o++) {
             List<Double> ro = new ArrayList<>();
@@ -424,19 +412,23 @@ public class PSO {
             double Z = countZ(temp.get(o), eDot.get(o));
             double roCr = countRoCr(a, Z);
             List<Double> A = evalBigA(a, Z, eDot.get(o), temp.get(o));
-            ro.add(0.0);
+            ro.add(1000.0);
             double t = 1 / eDot.get(o);
-            double deltaT = t / this.m.get(o);
+            //double deltaT = t / this.m.get(o);
+            double deltaT = 0.001;
+            List<Double> timeS = new ArrayList<>();
 
             int k = 0;
 
             int tInf = 0;
-
-            for (int j = 0; j < m.get(o); j++) {
+            int j = 0;
+            System.out.println("Temp " + temp.get(o) + "    edot" + eDot.get(o) + "     dt" + t);
+            for (double tt = 0; tt <= t; tt += deltaT) {
+                timeS.add(tt);
 
                 if (k == 0) {
 
-                    if (ro.get(j) >= roCr) {
+                    if (ro.get(j) > roCr) {
                         k = j;
 
                         tInf = 1;
@@ -451,48 +443,53 @@ public class PSO {
                 double roNew = ro.get(j) + deltaT * evalRo(ro, A, eDot.get(o), j, a.get(7), tInf, k);
 
                 sigma.add(a.get(6) + a.get(5) * u * b * Math.sqrt(ro.get(j)));
-
                 ro.add(roNew);
+                j++;
 
             }
+            timeO.add(timeS);
             sigmaO.add(sigma);
         }
 
-        data.saveData(a, getN(), this.m, sigmaO, sigmaE, eps);
+       // data.saveData(a, getN(), this.m, sigmaO, sigmaE, eps);
+        data.saveSigma(getN(), this.m, sigmaO, timeO);
 
 
     }
 
     public static void main(String[] args) {
         List<Double> a = interVar.generateSmalla();
-        PSO pso = new PSO(100, a.size());
+        //amount możesz modyfikować
+        PSO pso = new PSO(1000, a.size());
         List<List<Double>> aa = new ArrayList<>();
         for (int i = 0; i < pso.getAmount(); i++) {
             aa.add(interVar.generateSmalla());
         }
+        //w, c1,c2 mozesz modyfikowac
         double w = 0.5;
         double c1 = 1;
         double c2 = 1;
         Particle x = pso.methodPSO(w, c1, c2, aa);
-        List<Double> fin = x.getX();
-        List<Double> apdf = new ArrayList<>();
-        apdf.add(1.4301 * Math.pow(10, -3));
-        apdf.add(98.439);
-        apdf.add(15.527 * Math.pow(10, 3));
-        apdf.add(0.000179 * 3 * Math.pow(10, 10));
-        apdf.add(154.88 * Math.pow(10, 3));
-        apdf.add(0.80704);
-        apdf.add(3.1946);
-        apdf.add(0.98381);
-        apdf.add(0.005912);
-        apdf.add(0.2899);
-        apdf.add(0.0);
-        apdf.add(0.000538 * Math.pow(10, 13));
-        apdf.add(0.15551);
+          List<Double> fin = x.getX();
+          //wektor a z pdfa
+//        List<Double> apdf = new ArrayList<>();
+//        apdf.add(1.4301 * Math.pow(10, -3));
+//        apdf.add(98.439);
+//        apdf.add(15.527 * Math.pow(10, 3));
+//        apdf.add(0.000179 * 3 * Math.pow(10, 10));
+//        apdf.add(154.88 * Math.pow(10, 3));
+//        apdf.add(0.80704);
+//        apdf.add(3.1946);
+//        apdf.add(0.98381);
+//        apdf.add(0.005912);
+//        apdf.add(0.2899);
+//        apdf.add(0.0);
+//        apdf.add(0.000538 * Math.pow(10, 13));
+//        apdf.add(0.15551);
 
 
         try {
-            pso.save(apdf);
+            pso.save(fin);
         } catch (IOException e) {
             e.printStackTrace();
         }

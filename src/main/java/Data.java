@@ -31,6 +31,66 @@ public class Data {
         writer.close();
     }
 
+    public void saveSigma(int n, List<Double> m, List<List<Double>> sigmaO, List<List<Double>> time) throws IOException {
+        String excelFileName = "MySigma.xls";
+
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = null;
+        for (int i = 0; i < n; i++) {
+            sheet = wb.createSheet("Arkusz" + i);
+            double mm = m.get(i);
+
+            for (int r = 0; r < time.get(i).size(); r++) {
+                HSSFRow row = sheet.createRow(r);
+//                if (r == 0) {
+//                    for (int c = 0; c < 3; c++) {
+//                        HSSFCell cell = row.createCell(c);
+//                        switch (c) {
+//                            case 0:
+//                                cell.setCellValue("epsP");
+//                                break;
+//                            case 1:
+//                                cell.setCellValue("sigmaE");
+//                                break;
+//                            case 2:
+//                                cell.setCellValue("sigmaO");
+//                                break;
+//                            default:
+//                                cell.setCellValue(0);
+//                        }
+//                    }
+//                } else {
+
+
+                for (int c = 0; c < 3; c++) {
+                    HSSFCell cell = row.createCell(c);
+
+                    switch (c) {
+
+                        case 0:
+                            cell.setCellValue(time.get(i).get(r));
+
+                            break;
+                        case 1:
+                            cell.setCellValue(sigmaO.get(i).get(r));
+
+                            break;
+                        default:
+                            cell.setCellValue(0);
+                    }
+
+                }
+                // }
+            }
+        }
+        FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+        wb.write(fileOut);
+        fileOut.flush();
+        fileOut.close();
+
+    }
+
     public void saveData(List<Double> a, int n, List<Double> m, List<List<Double>> sigmaO, List<List<Double>> sigmaE, List<List<Double>> eps) throws IOException {
 
         String excelFileName = "InternakVar.xls";

@@ -5,17 +5,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 public class interVar {
 
     // LoadData loadData;
-    HookeJeeves hookeJeeves;
 
     public final double Q = 238000;
     public final double R = 8.314;
@@ -41,8 +38,6 @@ public class interVar {
     List<Double> m = new ArrayList<>();
 
     interVar() {
-        hookeJeeves = new HookeJeeves();
-
         temp = new ArrayList<>();
         eDot = new ArrayList<>();
         sigmaExp = new ArrayList<>();
@@ -143,12 +138,30 @@ public class interVar {
         a.add(generateNumber(0.01, 100) * Math.pow(10, 3));//5
         a.add(generateNumber(Math.pow(10, -4), 100));//6
         a.add(generateNumber(Math.pow(10, -3), 100));//7
-        a.add(generateNumber(Math.pow(10, -5), 10));//8
-        a.add(generateNumber(Math.pow(10, -10), 10));//9
+        a.add(1.0);
+        //a.add(generateNumber(Math.pow(10, -5), 10));//8
+        a.add(0.0);//9
+      //  a.add(generateNumber(Math.pow(10, -10), 10));//9
         a.add(generateNumber(Math.pow(10, -5), 10));//10
         a.add(0.0);//11
         a.add(generateNumber(Math.pow(10, -10), 10) * Math.pow(10, 13));//12
         a.add(generateNumber(Math.pow(10, -5), 10));//13
+
+        //tu probowałam jako poczatkowe "a" dac te z pdfa mozesz sobie puscic
+//                List<Double> apdf = new ArrayList<>();
+//        apdf.add(1.4301 * Math.pow(10, -3));
+//        apdf.add(98.439);
+//        apdf.add(15.527 * Math.pow(10, 3));
+//        apdf.add(0.000179 * 3 * Math.pow(10, 10));
+//        apdf.add(154.88 * Math.pow(10, 3));
+//        apdf.add(0.80704);
+//        apdf.add(3.1946);
+//        apdf.add(1.0);
+//        apdf.add(0.0);
+//        apdf.add(0.2899);
+//        apdf.add(0.0);
+//        apdf.add(0.000538 * Math.pow(10, 13));
+//        apdf.add(0.15551);
         return a;
     }
 
